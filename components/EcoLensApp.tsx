@@ -2,11 +2,15 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { downscale } from "@/lib/image";
-import { BIN_HEX, BIN_LABEL, formatDistance } from "@/lib/waste";
+import { BIN_HEX, BIN_LABEL, MAPS_SEARCH_URL } from "@/lib/waste";
 import type { ClassifyResult } from "@/lib/classify";
 import { CameraIcon, CartonIcon, ChevronLeft, ImageIcon, PinIcon, RecycleLogo, TrashIcon } from "./Icons";
 
 type Screen = "inicio" | "captura" | "analizando" | "resultado";
+
+function confidenceLabel(c: number) {
+  return c >= 0.8 ? "Confianza alta" : c >= 0.5 ? "Confianza media" : "Confianza baja";
+}
 
 export default function EcoLensApp() {
   const [screen, setScreen] = useState<Screen>("inicio");
@@ -175,24 +179,36 @@ export default function EcoLensApp() {
               </div>
               <h1 className="h1">{result.material}</h1>
               <p className="desc">{result.description}</p>
-              <span className="pill">{Math.round(result.confidence * 100)}% de confianza</span>
+              {result.recognized ? (
+                <span className="pill">{confidenceLabel(result.confidence)}</span>
+              ) : (
+                <span className="pill warn">No se pudo identificar</span>
+              )}
 
               <div className="info">
-                <div className="row">
-                  <TrashIcon />
-                  <span>
-                    <i className="dot" style={{ background: BIN_HEX[result.bin] }} />
-                    <strong>{BIN_LABEL[result.bin]}.</strong> {result.tip}
-                  </span>
-                </div>
+                {result.recognized ? (
+                  <div className="row">
+                    <TrashIcon />
+                    <span>
+                      <i className="dot" style={{ background: BIN_HEX[result.bin] }} />
+                      <strong>{BIN_LABEL[result.bin]}.</strong> {result.tip}
+                    </span>
+                  </div>
+                ) : (
+                  <div className="row">
+                    <CameraIcon size={22} />
+                    <span>{result.tip || "Toma otra foto, más cerca y con buena luz."}</span>
+                  </div>
+                )}
                 <div className="row">
                   <PinIcon />
                   <span>
-                    Punto limpio más cercano: <strong>{result.nearestPoint.name}</strong> · {formatDistance(result.nearestPoint.distanceM)}
+                    <a href={MAPS_SEARCH_URL} target="_blank" rel="noopener noreferrer">
+                      Buscar un punto de reciclaje cercano
+                    </a>
                   </span>
                 </div>
               </div>
-              {result.demo && <p className="demo-tag">Resultado de demostración — modelo de visión aún no conectado.</p>}
             </div>
             <div className="actions">
               <button className="btn-primary" onClick={() => { setResult(null); setScreen("captura"); }}>
