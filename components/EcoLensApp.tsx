@@ -3,13 +3,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { downscale } from "@/lib/image";
 import { BIN_HEX, BIN_LABEL, MAPS_SEARCH_URL } from "@/lib/waste";
-import type { ClassifyResult } from "@/lib/classify";
+import { classify, onModelProgress, warmup, type ClassifyResult } from "@/lib/classifier";
 import { CameraIcon, CartonIcon, ChevronLeft, ImageIcon, PinIcon, RecycleLogo, TrashIcon } from "./Icons";
 
 type Screen = "inicio" | "captura" | "analizando" | "resultado";
 
 function confidenceLabel(c: number) {
-  return c >= 0.8 ? "Confianza alta" : c >= 0.5 ? "Confianza media" : "Confianza baja";
+  return c >= 0.6 ? "Seguridad alta" : c >= 0.4 ? "Seguridad media" : "Seguridad baja";
 }
 
 export default function EcoLensApp() {
@@ -18,6 +18,8 @@ export default function EcoLensApp() {
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [liveCam, setLiveCam] = useState(false);
+  const [modelPct, setModelPct] = useState<number | null>(null); // null = no descargando
+  const [modelReady, setModelReady] = useState(false);
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -57,23 +59,34 @@ export default function EcoLensApp() {
     };
   }, [screen, stopCamera]);
 
+  // Descarga el modelo al abrir la cámara (la primera vez pesa ~150 MB; luego queda en caché).
+  useEffect(() => {
+    if (screen !== "captura" || modelReady) return;
+    const off = onModelProgress((p) => setModelPct(p));
+    warmup().then(() => { setModelReady(true); setModelPct(null); }).catch(() => {
+      setError("No se pudo cargar el modelo de reconocimiento. Revisa tu conexión e intenta de nuevo.");
+      setModelPct(null);
+    });
+    return () => { off(); };
+  }, [screen, modelReady]);
+
   useEffect(() => () => { if (photoUrl) URL.revokeObjectURL(photoUrl); }, [photoUrl]);
 
   async function analyze(blob: Blob) {
     setError("");
     setScreen("analizando");
+    let url: string | null = null;
     try {
       const small = await downscale(blob);
-      setPhotoUrl(URL.createObjectURL(small));
-      const body = new FormData();
-      body.append("image", small, "foto.jpg");
-      const res = await fetch("/api/classify", { method: "POST", body });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? "No se pudo identificar el residuo.");
-      setResult(data as ClassifyResult);
+      url = URL.createObjectURL(small);
+      setPhotoUrl(url);
+      const r = await classify(url);
+      setResult(r);
+      setModelReady(true);
       setScreen("resultado");
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Algo salió mal. Intenta de nuevo.");
+      console.error(e);
+      setError("No se pudo identificar el residuo. Revisa tu conexión e intenta de nuevo.");
       setScreen("captura");
     }
   }
@@ -139,7 +152,7 @@ export default function EcoLensApp() {
             {screen === "analizando" ? (
               <div className="loading" role="status" aria-live="polite">
                 <div className="spin" />
-                <span>Identificando residuo…</span>
+                <span>{modelPct !== null && !modelReady ? `Descargando el modelo (solo la primera vez)… ${modelPct}%` : "Identificando residuo…"}</span>
               </div>
             ) : (
               <>
@@ -150,6 +163,9 @@ export default function EcoLensApp() {
                     <i className="corner tl" /><i className="corner tr" /><i className="corner bl" /><i className="corner br" />
                   </div>
                   <p className="hint">Mantén el residuo centrado y con buena luz.</p>
+                  <p className="hint" role="status">
+                    {modelPct !== null && !modelReady ? `Preparando el reconocimiento… ${modelPct}%` : ""}
+                  </p>
                   <p className="err" role="alert">{error}</p>
                 </div>
                 <div className="shutter-row">
@@ -180,7 +196,7 @@ export default function EcoLensApp() {
               <h1 className="h1">{result.material}</h1>
               <p className="desc">{result.description}</p>
               {result.recognized ? (
-                <span className="pill">{confidenceLabel(result.confidence)}</span>
+                <span className="pill">{confidenceLabel(result.score)}</span>
               ) : (
                 <span className="pill warn">No se pudo identificar</span>
               )}
@@ -198,6 +214,12 @@ export default function EcoLensApp() {
                   <div className="row">
                     <CameraIcon size={22} />
                     <span>{result.tip || "Toma otra foto, más cerca y con buena luz."}</span>
+                  </div>
+                )}
+                {result.recognized && result.alternative && (
+                  <div className="row">
+                    <ImageIcon />
+                    <span>También podría ser: <strong>{result.alternative.material}</strong>. Si no coincide con lo que tienes, toma otra foto.</span>
                   </div>
                 )}
                 <div className="row">

@@ -3,15 +3,9 @@
 Web app (mobile-first) que identifica qué residuo es a partir de una foto y dice en qué caneca va (código de colores de Bogotá) y cuál es el punto de reciclaje más cercano.
 Proyecto académico — Universidad Libre, Metodología de la Investigación.
 
-> **Estado:** el reconocimiento es real: la foto se envía a un modelo de visión (Claude, vía API) que identifica el residuo y la caneca según el código de Bogotá. **Sin la variable `ANTHROPIC_API_KEY` la app no inventa resultados: muestra un error de "reconocimiento no configurado".**
+> **Estado:** reconocimiento real, **sin servidor ni llaves de API**. El modelo (CLIP, clasificación *zero-shot*) corre en el navegador del usuario: compara la foto contra las descripciones de `lib/labels.json` y gana la más parecida. La primera vez descarga ~150 MB (queda en caché); abre la app una vez con buen WiFi antes de una demo.
 >
-> Limitaciones: la "confianza" la auto-reporta el modelo (no es una probabilidad calibrada) y todavía no hay medición de *accuracy*. El modelo propio entrenado con TrashNet sigue pendiente.
-
-## Activar el reconocimiento
-
-En Vercel: *Project → Settings → Environment Variables* → agrega `ANTHROPIC_API_KEY` (llave de console.anthropic.com) y haz *Redeploy*.
-Opcional: `ANTHROPIC_MODEL` para cambiar de modelo (por defecto `claude-sonnet-5-5`).
-Local: crea `.env.local` con `ANTHROPIC_API_KEY=...` (ya está en `.gitignore`).
+> **Precisión medida** (muestra de TrashNet no usada para ajustar, 240 fotos): material ≈ 64 % · caneca correcta ≈ 76–81 %. TrashNet son fotos sobre fondo claro, así que en uso real puede ser menor. El "nivel de seguridad" que muestra la app es el peso de la opción ganadora entre todas, **no** una probabilidad de acierto. No hay modelo propio entrenado todavía.
 
 ## Correr local
 
@@ -34,13 +28,14 @@ O con la CLI: `npx vercel` (te pide login la primera vez) y luego `npx vercel --
 | Archivo | Para qué sirve |
 |---|---|
 | `components/EcoLensApp.tsx` | Las pantallas y el flujo (cámara, galería, resultado) |
-| `app/api/classify/route.ts` | Endpoint `POST /api/classify` (recibe campo `image`) |
-| `lib/classify.ts` | Llamada al modelo de visión y reglas de clasificación (prompt). **Aquí se cambia por un modelo propio** |
+| `lib/classifier.ts` | Carga el modelo en el navegador y clasifica la foto. **Aquí se cambia por un modelo propio** |
+| `lib/labels.json` | Categorías de residuos: descripciones para el modelo, caneca y consejo |
 | `lib/waste.ts` | Canecas (blanco/negro/verde/especial) y enlace a Google Maps |
-| `lib/image.ts` | Reduce la foto a 1024 px antes de subirla |
+| `lib/image.ts` | Reduce la foto a 1024 px antes de analizarla |
 
-## Siguientes pasos
+## Cómo mejorar el reconocimiento
 
-1. **Modelo propio**: entrenar con TrashNet + fotos locales y reemplazar la llamada en `classifyImage()` (mismo tipo de retorno `ClassifyResult`).
-2. **Puntos de reciclaje reales**: hoy el botón abre una búsqueda en Google Maps. Cambiar por datos reales (UAESP / Datos Abiertos Bogotá) ordenados por distancia con `navigator.geolocation`.
-3. **Medición para la investigación**: guardar (con consentimiento) aciertos/errores para calcular la *accuracy* y aplicar la encuesta Likert.
+- **Etiquetas**: edita `lib/labels.json` (descripciones en inglés para el modelo, nombre/caneca/consejo en español). Más descripciones por categoría = mejor resultado. Para medir cambios, evalúa contra TrashNet antes de publicar.
+- **Modelo propio**: entrenar con TrashNet + fotos locales y reemplazar `getPipeline()` en `lib/classifier.ts` (mismo `ClassifyResult`).
+- **Puntos de reciclaje reales**: hoy el botón abre una búsqueda en Google Maps. Cambiar por datos reales (UAESP / Datos Abiertos Bogotá) ordenados por distancia con `navigator.geolocation`.
+- **Medición para la investigación**: guardar (con consentimiento) aciertos/errores para calcular la *accuracy* y aplicar la encuesta Likert.
