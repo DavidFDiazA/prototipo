@@ -1,5 +1,6 @@
 /**
  * Reconocimiento de residuos EN EL NAVEGADOR (sin servidor ni llaves de API).
+ * MODO DEMOSTRACIÓN: solo distingue "papel" de "no papel" (el catálogo completo de 14 categorías está en labels.completo.json).
  * Modelo: CLIP (Xenova/clip-vit-base-patch32, cuantizado) con clasificación "zero-shot":
  * se compara la foto contra las descripciones de lib/labels.json y gana la más parecida.
  *
@@ -26,7 +27,7 @@ export type ClassifyResult = {
 };
 
 const MODEL_ID = "Xenova/clip-vit-base-patch32";
-const MIN_SCORE = 0.3; // por debajo de esto no afirmamos nada (valor sin afinar)
+const MIN_SCORE = 0.5; // modo solo-papel: se exige que "papel" pese al menos 0.5 (ajustado con TrashNet, ver eval/)
 
 const CANDIDATES = LABELS.flatMap((l) => l.prompts);
 const OWNER: Record<string, string> = Object.fromEntries(LABELS.flatMap((l) => l.prompts.map((p) => [p, l.id])));
@@ -83,7 +84,7 @@ export async function classify(imageUrl: string): Promise<ClassifyResult> {
   if (top.none || topScore < MIN_SCORE) {
     return {
       recognized: false, material: "", description: "", bin: "negro", score: topScore,
-      tip: "No logré distinguir un residuo. Acércate, centra el objeto y usa buena luz.",
+      tip: "No identifiqué papel en la foto (esta versión solo reconoce papel). Acércate, centra la hoja y usa buena luz.",
     };
   }
   const second = ranked.find(([id]) => id !== topId && !LABELS.find((l) => l.id === id)!.none);

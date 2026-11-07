@@ -1,0 +1,188 @@
+[
+ {
+  "id": "botella-plastico",
+  "material": "Botella de plástico (PET)",
+  "description": "Plástico aprovechable",
+  "bin": "blanco",
+  "tip": "Vacíala, aplástala y ponle la tapa. Va limpia y seca.",
+  "eval": "plastic",
+  "prompts": [
+   "a plastic bottle",
+   "a clear plastic water bottle",
+   "a plastic container or plastic cup"
+  ]
+ },
+ {
+  "id": "bolsa-plastico",
+  "material": "Bolsa o empaque plástico",
+  "description": "Plástico flexible; es aprovechable solo si está limpio y seco",
+  "bin": "blanco",
+  "tip": "Si está limpio y seco va a la blanca; si está sucio o con grasa, a la negra.",
+  "eval": "trash",
+  "prompts": [
+   "a crumpled plastic bag",
+   "a plastic wrapper or chip bag"
+  ]
+ },
+ {
+  "id": "tetrapak",
+  "material": "Tetrapak",
+  "description": "Material multicapa: cartón, plástico y aluminio",
+  "bin": "blanco",
+  "tip": "Enjuágalo, aplástalo y deposítalo en la caneca blanca.",
+  "eval": "cardboard",
+  "prompts": [
+   "a tetra pak carton for milk or juice",
+   "a juice box carton"
+  ]
+ },
+ {
+  "id": "lata",
+  "material": "Lata o envase metálico",
+  "description": "Metal aprovechable",
+  "bin": "blanco",
+  "tip": "Enjuágala y aplástala para ahorrar espacio.",
+  "eval": "metal",
+  "prompts": [
+   "an aluminum soda can",
+   "a metal tin can",
+   "a metal lid or foil"
+  ]
+ },
+ {
+  "id": "vidrio",
+  "material": "Vidrio",
+  "description": "Botellas y frascos de vidrio",
+  "bin": "blanco",
+  "tip": "Entrégalo limpio y sin tapa. Si está roto, envuélvelo en papel y márcalo.",
+  "eval": "glass",
+  "prompts": [
+   "a glass bottle",
+   "a glass jar",
+   "a green or brown glass bottle"
+  ]
+ },
+ {
+  "id": "carton",
+  "material": "Cartón",
+  "description": "Cajas y empaques de cartón",
+  "bin": "blanco",
+  "tip": "Debe estar seco y limpio. Aplana la caja antes de depositarla.",
+  "eval": "cardboard",
+  "prompts": [
+   "a cardboard box",
+   "a flattened brown cardboard",
+   "a piece of corrugated cardboard"
+  ]
+ },
+ {
+  "id": "papel",
+  "material": "Papel",
+  "description": "Papel y periódico",
+  "bin": "blanco",
+  "tip": "Debe estar seco y limpio. El papel sucio o con grasa va a la negra.",
+  "eval": "paper",
+  "prompts": [
+   "a sheet of white paper",
+   "a crumpled sheet of paper",
+   "a newspaper or magazine page"
+  ]
+ },
+ {
+  "id": "organico",
+  "material": "Residuo orgánico",
+  "description": "Restos de comida y cáscaras",
+  "bin": "verde",
+  "tip": "Deposítalo en la caneca verde. Si puedes, úsalo para compostaje.",
+  "eval": "trash",
+  "prompts": [
+   "food scraps",
+   "a fruit peel or vegetable waste"
+  ]
+ },
+ {
+  "id": "icopor",
+  "material": "Icopor",
+  "description": "Poliestireno expandido, no aprovechable",
+  "bin": "negro",
+  "tip": "Va en la caneca negra. Evita su uso cuando puedas.",
+  "eval": "trash",
+  "prompts": [
+   "a styrofoam container",
+   "white styrofoam foam"
+  ]
+ },
+ {
+  "id": "servilleta",
+  "material": "Servilleta o papel higiénico",
+  "description": "Papel sucio, no aprovechable",
+  "bin": "negro",
+  "tip": "Va en la caneca negra.",
+  "eval": "trash",
+  "prompts": [
+   "a used napkin",
+   "a tissue or toilet paper"
+  ]
+ },
+ {
+  "id": "pila",
+  "material": "Pila / batería",
+  "description": "Residuo peligroso (RESPEL)",
+  "bin": "especial",
+  "tip": "No la botes a la basura. Entrégala en un punto de recolección de pilas.",
+  "eval": null,
+  "prompts": [
+   "a battery",
+   "a stack of batteries"
+  ]
+ },
+ {
+  "id": "bombillo",
+  "material": "Bombillo",
+  "description": "Residuo especial",
+  "bin": "especial",
+  "tip": "No va a la caneca. Entrégalo en un punto de recolección de bombillos.",
+  "eval": null,
+  "prompts": [
+   "a light bulb"
+  ]
+ },
+ {
+  "id": "electronico",
+  "material": "Aparato electrónico (RAEE)",
+  "description": "Residuo electrónico",
+  "bin": "especial",
+  "tip": "No va a la caneca. Llévalo a una jornada o punto de recolección de RAEE.",
+  "eval": null,
+  "prompts": [
+   "an electronic device",
+   "a phone charger or electrical cable"
+  ]
+ },
+ {
+  "id": "medicamento",
+  "material": "Medicamentos",
+  "description": "Residuo especial",
+  "bin": "especial",
+  "tip": "No los botes a la caneca ni al lavaplatos. Llévalos a un punto de recolección de medicamentos.",
+  "eval": null,
+  "prompts": [
+   "medicine pills",
+   "a blister pack of tablets"
+  ]
+ },
+ {
+  "id": "ninguno",
+  "material": "",
+  "description": "",
+  "bin": "negro",
+  "tip": "",
+  "eval": null,
+  "none": true,
+  "prompts": [
+   "a person",
+   "an empty room or a wall",
+   "a hand, not a waste item"
+  ]
+ }
+]

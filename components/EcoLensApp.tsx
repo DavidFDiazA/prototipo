@@ -128,8 +128,8 @@ export default function EcoLensApp() {
               <div className="logo"><RecycleLogo /></div>
               <span className="eyebrow">ECOLENS</span>
             </div>
-            <h1 className="h1">Clasifica tus residuos en segundos</h1>
-            <p className="lead">Toma una foto y te decimos en qué caneca va, con el punto de reciclaje más cercano.</p>
+            <h1 className="h1">Identifica papel en segundos</h1>
+            <p className="lead">Modo demostración: toma una foto de un papel y te decimos en qué caneca va.</p>
             <div className="drop"><CameraIcon size={72} /></div>
             <div className="actions">
               <button className="btn-primary" onClick={() => setScreen("captura")}>

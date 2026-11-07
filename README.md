@@ -1,5 +1,8 @@
 # EcoLens — prototipo
 
+> **Modo demostración (solo papel).** Desde nov-2026 el catálogo activo (`lib/labels.json`) solo distingue *papel* de *no papel*. El catálogo completo de 14 categorías sigue en `lib/labels.completo.json`; para restaurarlo, copiarlo sobre `labels.json` y devolver `MIN_SCORE` a 0.30. En TrashNet (conjunto de ajuste) el modo detecta ~95 % de las imágenes de papel y marca como papel ~9 % de las demás; en el conjunto aparte fue ~85 % y ~17 %. Son fotos de estudio: con fotos de celular puede variar.
+
+
 Web app (mobile-first) que identifica qué residuo es a partir de una foto y dice en qué caneca va (código de colores de Bogotá) y cuál es el punto de reciclaje más cercano.
 Proyecto académico — Universidad Libre, Metodología de la Investigación.
 
