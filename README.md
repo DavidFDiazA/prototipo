@@ -5,7 +5,9 @@ Proyecto académico — Universidad Libre, Metodología de la Investigación.
 
 > **Estado:** reconocimiento real, **sin servidor ni llaves de API**. El modelo (CLIP, clasificación *zero-shot*) corre en el navegador del usuario: compara la foto contra las descripciones de `lib/labels.json` y gana la más parecida. La primera vez descarga ~150 MB (queda en caché); abre la app una vez con buen WiFi antes de una demo.
 >
-> **Precisión medida** (muestra de TrashNet no usada para ajustar, 240 fotos): material ≈ 64 % · caneca correcta ≈ 76–81 %. TrashNet son fotos sobre fondo claro, así que en uso real puede ser menor. El "nivel de seguridad" que muestra la app es el peso de la opción ganadora entre todas, **no** una probabilidad de acierto. No hay modelo propio entrenado todavía.
+> **Precisión medida** (240 fotos de TrashNet no usadas para ajustar las descripciones, 40 por clase): material correcto **60.8 %** (IC 95 %: 54.5–66.8) · caneca correcta **70.4 %** (64.4–75.8) · el sistema responde en el 87.1 % de las fotos; entre las que responde, material 69.9 % y caneca 80.9 %. Azar entre 6 clases: 16.7 %. TrashNet son fotos sobre fondo claro, así que en uso real puede ser menor. El "nivel de seguridad" que muestra la app es el peso de la opción ganadora entre todas, **no** una probabilidad de acierto. No hay modelo propio entrenado todavía.
+>
+> Reproducir la evaluación: ver `eval/` (script, resultados por imagen y cálculo de métricas).
 
 ## Correr local
 
